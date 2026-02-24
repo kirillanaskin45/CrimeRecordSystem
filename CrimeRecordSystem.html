@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚔 Crime Record Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            border-bottom: 3px solid #ff4757;
+        }
+
+        .header i {
+            margin: 0 10px;
+            color: #ff4757;
+        }
+
+        /* Main content */
+        .main-content {
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+            min-height: 600px;
+        }
+
+        /* Left panel - Form */
+        .form-panel {
+            flex: 1;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            border: 2px solid #4682B4;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-panel h2 {
+            color: #1a1a2e;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4682B4;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #4682B4;
+            box-shadow: 0 0 0 3px rgba(70, 130, 180, 0.1);
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+        }
+
+        .btn-clear {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+
+        /* Right panel - Table */
+        .table-panel {
+            flex: 2;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            border: 2px solid #FF69B4;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-panel h2 {
+            color: #1a1a2e;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #FF69B4;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: linear-gradient(135deg, #FF69B4, #FF1493);
+            color: white;
+            padding: 12px;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        tr:hover {
+            background-color: #e3f2fd;
+        }
+
+        .table-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 15px;
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #f1c40f, #f39c12);
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        /* Bottom panel */
+        .bottom-panel {
+            background: #f8f9fa;
+            padding: 20px;
+            border-top: 2px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .search-box input {
+            padding: 8px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            width: 200px;
+        }
+
+        .btn-search {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        }
+
+        .btn-show-all {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+
+        .status {
+            font-weight: bold;
+            color: #2ecc71;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .btn-confirm {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .btn-cancel {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        tr {
+            animation: slideIn 0.3s ease;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .bottom-panel {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <i>🚔</i> CRIME RECORD MANAGEMENT SYSTEM <i>🚔</i>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Panel - Form -->
+            <div class="form-panel">
+                <h2><i>📝</i> Добавить запись</h2>
+                
+                <div class="form-group">
+                    <label>ID преступления:</label>
+                    <input type="text" id="crimeId" placeholder="Например: CR-001">
+                </div>
+                
+                <div class="form-group">
+                    <label>Тип преступления:</label>
+                    <select id="crimeType">
+                        <option value="🔪 Murder">🔪 Murder</option>
+                        <option value="💰 Theft">💰 Theft</option>
+                        <option value="💳 Fraud">💳 Fraud</option>
+                        <option value="👊 Assault">👊 Assault</option>
+                        <option value="💻 Cybercrime">💻 Cybercrime</option>
+                        <option value="🚗 Robbery">🚗 Robbery</option>
+                        <option value="🔥 Arson">🔥 Arson</option>
+                        <option value="💊 Drug Trafficking">💊 Drug Trafficking</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Место:</label>
+                    <input type="text" id="location" placeholder="Город, район">
+                </div>
+                
+                <div class="form-group">
+                    <label>Обвиняемый:</label>
+                    <input type="text" id="accused" placeholder="ФИО">
+                </div>
+                
+                <div class="form-group">
+                    <label>Следователь:</label>
+                    <input type="text" id="officer" placeholder="ФИО">
+                </div>
+                
+                <div class="form-group">
+                    <label>Дата:</label>
+                    <input type="date" id="date" value="2024-01-01">
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn btn-add" onclick="addRecord()">
+                        <i>➕</i> Добавить
+                    </button>
+                    <button class="btn btn-clear" onclick="clearForm()">
+                        <i>🔄</i> Очистить
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Panel - Table -->
+            <div class="table-panel">
+                <h2><i>📋</i> Список преступлений</h2>
+                
+                <div class="table-container">
+                    <table id="crimeTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Тип</th>
+                                <th>Место</th>
+                                <th>Обвиняемый</th>
+                                <th>Следователь</th>
+                                <th>Дата</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <!-- Данные будут добавлены через JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="table-controls">
+                    <button class="btn btn-edit" onclick="editRecord()">
+                        <i>✏️</i> Редактировать
+                    </button>
+                    <button class="btn btn-delete" onclick="showDeleteModal()">
+                        <i>🗑️</i> Удалить
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Panel -->
+        <div class="bottom-panel">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Введите тип преступления...">
+                <button class="btn btn-search" onclick="searchRecords()">
+                    <i>🔍</i> Найти
+                </button>
+                <button class="btn btn-show-all" onclick="showAllRecords()">
+                    <i>📋</i> Показать все
+                </button>
+            </div>
+            <div class="status" id="statusLabel">
+                <i>📊</i> Всего записей: 0
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <h3>Подтверждение удаления</h3>
+            <p>Вы уверены, что хотите удалить эту запись?</p>
+            <div class="modal-buttons">
+                <button class="btn btn-confirm" onclick="confirmDelete()">Да, удалить</button>
+                <button class="btn btn-cancel" onclick="hideDeleteModal()">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Массив для хранения записей
+        let crimeList = [];
+        let selectedRow = null;
+        
+        // Класс для записи о преступлении
+        class CrimeRecord {
+            constructor(id, crimeType, location, accusedName, officer, date) {
+                this.id = id;
+                this.crimeType = crimeType;
+                this.location = location;
+                this.accusedName = accusedName;
+                this.officer = officer;
+                this.date = date;
+            }
+        }
+        
+        // Добавление тестовых данных
+        function addSampleData() {
+            crimeList.push(new CrimeRecord("CR-001", "🔪 Murder", "New York", "John Smith", "Det. Johnson", "2024-01-15"));
+            crimeList.push(new CrimeRecord("CR-002", "💰 Theft", "Los Angeles", "Mike Brown", "Sgt. Williams", "2024-01-16"));
+            crimeList.push(new CrimeRecord("CR-003", "💻 Cybercrime", "Chicago", "Alex Wilson", "Special Agent Davis", "2024-01-17"));
+            crimeList.push(new CrimeRecord("CR-004", "💳 Fraud", "Miami", "Sarah Lee", "Det. Martinez", "2024-01-18"));
+            crimeList.push(new CrimeRecord("CR-005", "👊 Assault", "Houston", "Tom Harris", "Officer Thompson", "2024-01-19"));
+        }
+        
+        // Отображение всех записей
+        function showAllRecords() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            crimeList.forEach((record, index) => {
+                const row = tbody.insertRow();
+                row.setAttribute('data-index', index);
+                row.onclick = function() { selectRow(this); };
+                
+                row.innerHTML = `
+                    <td>${record.id}</td>
+                    <td>${record.crimeType}</td>
+                    <td>${record.location}</td>
+                    <td>${record.accusedName}</td>
+                    <td>${record.officer}</td>
+                    <td>${record.date}</td>
+                `;
+            });
+            
+            updateStatus();
+        }
+        
+        // Выбор строки
+        function selectRow(row) {
+            if (selectedRow) {
+                selectedRow.style.backgroundColor = '';
+            }
+            selectedRow = row;
+            selectedRow.style.backgroundColor = '#e3f2fd';
+        }
+        
+        // Добавление записи
+        function addRecord() {
+            const id = document.getElementById('crimeId').value.trim();
+            const crimeType = document.getElementById('crimeType').value;
+            const location = document.getElementById('location').value.trim();
+            const accused = document.getElementById('accused').value.trim();
+            const officer = document.getElementById('officer').value.trim();
+            const date = document.getElementById('date').value;
+            
+            if (!id || !location || !accused || !officer) {
+                showMessage('❌ Пожалуйста, заполните все поля!', 'error');
+                return;
+            }
+            
+            // Проверка на уникальность ID
+            if (crimeList.some(record => record.id === id)) {
+                showMessage('❌ ID должен быть уникальным!', 'error');
+                return;
+            }
+            
+            crimeList.push(new CrimeRecord(id, crimeType, location, accused, officer, date));
+            showAllRecords();
+            clearForm();
+            showMessage('✅ Запись успешно добавлена!', 'success');
+        }
+        
+        // Очистка формы
+        function clearForm() {
+            document.getElementById('crimeId').value = '';
+            document.getElementById('location').value = '';
+            document.getElementById('accused').value = '';
+            document.getElementById('officer').value = '';
+            document.getElementById('date').value = '2024-01-01';
+            document.getElementById('crimeType').selectedIndex = 0;
+        }
+        
+        // Редактирование записи
+        function editRecord() {
+            if (!selectedRow) {
+                showMessage('❌ Выберите запись для редактирования!', 'warning');
+                return;
+            }
+            
+            const index = selectedRow.getAttribute('data-index');
+            const record = crimeList[index];
+            
+            // Заполняем форму
+            document.getElementById('crimeId').value = record.id;
+            document.getElementById('crimeType').value = record.crimeType;
+            document.getElementById('location').value = record.location;
+            document.getElementById('accused').value = record.accusedName;
+            document.getElementById('officer').value = record.officer;
+            document.getElementById('date').value = record.date;
+            
+            // Удаляем старую запись
+            crimeList.splice(index, 1);
+            showAllRecords();
+        }
+        
+        // Показать модальное окно удаления
+        function showDeleteModal() {
+            if (!selectedRow) {
+                showMessage('❌ Выберите запись для удаления!', 'warning');
+                return;
+            }
+            document.getElementById('deleteModal').style.display = 'flex';
+        }
+        
+        // Скрыть модальное окно
+        function hideDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+        }
+        
+        // Подтверждение удаления
+        function confirmDelete() {
+            const index = selectedRow.getAttribute('data-index');
+            crimeList.splice(index, 1);
+            showAllRecords();
+            hideDeleteModal();
+            selectedRow = null;
+            showMessage('✅ Запись успешно удалена!', 'success');
+        }
+        
+        // Поиск записей
+        function searchRecords() {
+            const searchText = document.getElementById('searchInput').value.trim().toLowerCase();
+            
+            if (!searchText) {
+                showAllRecords();
+                return;
+            }
+            
+            const filtered = crimeList.filter(record => 
+                record.crimeType.toLowerCase().includes(searchText)
+            );
+            
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            filtered.forEach((record, index) => {
+                const row = tbody.insertRow();
+                row.setAttribute('data-index', crimeList.indexOf(record));
+                row.onclick = function() { selectRow(this); };
+                
+                row.innerHTML = `
+                    <td>${record.id}</td>
+                    <td>${record.crimeType}</td>
+                    <td>${record.location}</td>
+                    <td>${record.accusedName}</td>
+                    <td>${record.officer}</td>
+                    <td>${record.date}</td>
+                `;
+            });
+            
+            updateStatus();
+        }
+        
+        // Обновление статуса
+        function updateStatus() {
+            const count = document.getElementById('tableBody').rows.length;
+            document.getElementById('statusLabel').innerHTML = `<i>📊</i> Всего записей: ${count}`;
+        }
+        
+        // Показ сообщений
+        function showMessage(text, type) {
+            // Можно реализовать красивые уведомления
+            alert(text);
+        }
+        
+        // Инициализация
+        window.onload = function() {
+            addSampleData();
+            showAllRecords();
+        };
+    </script>
+</body>
+</html>
